@@ -1,0 +1,11 @@
+flask
+boto3
+botocore
+awscli
+opensearch-py
+retrying
+ragas==0.1.9
+langchain
+langchain_aws
+langchain_community
+langchain-core

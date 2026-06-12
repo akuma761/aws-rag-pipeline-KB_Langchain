@@ -1,0 +1,12 @@
+__pycache__
+*.pyc
+*.pyo
+token.pickle
+auth_code.txt
+auth_url.txt
+mmt_invoices
+.git
+.ipynb_checkpoints
+*.ipynb
+venv
+.venv
