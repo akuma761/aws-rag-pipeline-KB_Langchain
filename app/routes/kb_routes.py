@@ -1,10 +1,13 @@
 from flask import Blueprint, request, jsonify
 
 from app.config import _save_kb_id
-from app.services.kb_service import (
+from app.services.s3_service import (
+    create_s3_bucket,
     download_sample_documents,
     upload_directory_to_s3,
-    create_opensearch_collection,
+)
+from app.services.oss_service import create_opensearch_collection
+from app.services.bedrock_service import (
     create_knowledge_base,
     create_data_source,
     start_ingestion_job,
@@ -13,6 +16,15 @@ from app.services.kb_service import (
 )
 
 kb_bp = Blueprint("kb", __name__)
+
+
+@kb_bp.route("/create-bucket", methods=["POST"])
+def create_bucket():
+    body = request.json or {}
+    bucket_name = body.get("bucket_name", "mmt-invoices")
+    region = body.get("region")
+    result = create_s3_bucket(bucket_name, region)
+    return jsonify({"message": "Bucket created", **result})
 
 
 @kb_bp.route("/download-documents", methods=["POST"])

@@ -4,6 +4,8 @@ __pycache__
 token.pickle
 auth_code.txt
 auth_url.txt
+cred.json
+kb_config.json
 mmt_invoices
 .git
 .ipynb_checkpoints
