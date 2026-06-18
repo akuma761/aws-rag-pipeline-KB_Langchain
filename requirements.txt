@@ -11,3 +11,4 @@ langchain_community
 langchain-core
 streamlit>=1.28
 requests
+pytest

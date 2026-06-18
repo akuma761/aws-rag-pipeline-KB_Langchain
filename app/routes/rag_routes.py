@@ -102,12 +102,15 @@ def rag_langchain():
     if errors:
         return jsonify({"error": "Missing required fields", "fields": errors}), 400
 
-    result = langchain_rag(
-        query=body["query"],
-        kb_id=kb_id,
-        model_id=body.get("model_id", "amazon.nova-lite-v1:0"),
-        number_of_results=body.get("number_of_results", 4),
-        search_type=body.get("search_type", "SEMANTIC"),
-    )
+    try:
+        result = langchain_rag(
+            query=body["query"],
+            kb_id=kb_id,
+            model_id=body.get("model_id", "amazon.nova-lite-v1:0"),
+            number_of_results=body.get("number_of_results", 4),
+            search_type=body.get("search_type", "SEMANTIC"),
+        )
+    except ImportError as e:
+        return jsonify({"error": str(e)}), 500
 
     return jsonify(result)
