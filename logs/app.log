@@ -1,0 +1,6 @@
+2026-06-19 02:39:09,951 INFO [botocore.credentials] Found credentials in shared credentials file: ~/.aws/credentials
+2026-06-19 02:39:10,381 INFO [werkzeug] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.29.154:5000
+2026-06-19 02:39:10,381 INFO [werkzeug] [33mPress CTRL+C to quit[0m

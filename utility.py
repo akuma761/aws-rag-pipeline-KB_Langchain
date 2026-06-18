@@ -7,8 +7,6 @@ suffix = random.randrange(200, 900)
 boto3_session = boto3.session.Session()
 region_name = boto3_session.region_name
 iam_client = boto3_session.client('iam')
-account_number = boto3.client('sts').get_caller_identity().get('Account')
-identity = boto3.client('sts').get_caller_identity()['Arn']
 
 encryption_policy_name = f"bedrock-sample-rag-sp-{suffix}"
 network_policy_name = f"bedrock-sample-rag-np-{suffix}"
@@ -20,6 +18,14 @@ sm_policy_name = f'AmazonBedrockSecretPolicyForKnowledgeBase_{suffix}'
 oss_policy_name = f'AmazonBedrockOSSPolicyForKnowledgeBase_{suffix}'
 
 sm_policy_flag = False
+
+
+def account_number():
+    return boto3.client('sts').get_caller_identity().get('Account')
+
+
+def identity():
+    return boto3.client('sts').get_caller_identity()['Arn']
 
 def create_bedrock_execution_role(bucket_name):
     foundation_model_policy_document = {
@@ -53,7 +59,7 @@ def create_bedrock_execution_role(bucket_name):
                 ],
                 "Condition": {
                     "StringEquals": {
-                        "aws:ResourceAccount": f"{account_number}"
+                        "aws:ResourceAccount": f"{account_number()}"
                     }
                 }
             }
@@ -121,7 +127,7 @@ def create_oss_policy_attach_bedrock_execution_role(collection_id, bedrock_kb_ex
                     "aoss:APIAccessAll"
                 ],
                 "Resource": [
-                    f"arn:aws:aoss:{region_name}:{account_number}:collection/{collection_id}"
+                    f"arn:aws:aoss:{region_name}:{account_number()}:collection/{collection_id}"
                 ]
             }
         ]
@@ -189,7 +195,7 @@ def create_policies_in_oss(vector_store_name, aoss_client, bedrock_kb_execution_
                                 'aoss:WriteDocument'],
                             'ResourceType': 'index'
                         }],
-                    'Principal': [identity, bedrock_kb_execution_role_arn],
+                    'Principal': [identity(), bedrock_kb_execution_role_arn],
                     'Description': 'Easy data policy'}
             ]),
         type='data'
@@ -198,10 +204,10 @@ def create_policies_in_oss(vector_store_name, aoss_client, bedrock_kb_execution_
 
 
 def delete_iam_role_and_policies():
-    fm_policy_arn = f"arn:aws:iam::{account_number}:policy/{fm_policy_name}"
-    s3_policy_arn = f"arn:aws:iam::{account_number}:policy/{s3_policy_name}"
-    oss_policy_arn = f"arn:aws:iam::{account_number}:policy/{oss_policy_name}"
-    sm_policy_arn = f"arn:aws:iam::{account_number}:policy/{sm_policy_name}"
+    fm_policy_arn = f"arn:aws:iam::{account_number()}:policy/{fm_policy_name}"
+    s3_policy_arn = f"arn:aws:iam::{account_number()}:policy/{s3_policy_name}"
+    oss_policy_arn = f"arn:aws:iam::{account_number()}:policy/{oss_policy_name}"
+    sm_policy_arn = f"arn:aws:iam::{account_number()}:policy/{sm_policy_name}"
 
     iam_client.detach_role_policy(
         RoleName=bedrock_execution_role_name,
@@ -312,7 +318,7 @@ def create_bedrock_execution_role_multi_ds(bucket_names = None, secrets_arns = N
                     "Resource": [item for sublist in [[f'arn:aws:s3:::{bucket}', f'arn:aws:s3:::{bucket}/*'] for bucket in bucket_names] for item in sublist], 
                     "Condition": {
                         "StringEquals": {
-                            "aws:ResourceAccount": f"{account_number}"
+                            "aws:ResourceAccount": f"{account_number()}"
                         }
                     }
                 }
