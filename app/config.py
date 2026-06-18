@@ -4,18 +4,27 @@ import os
 _KB_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "kb_config.json")
 
 
-def _load_stored_kb_id() -> str:
+def _load_config() -> dict:
     try:
         with open(_KB_CONFIG_PATH) as f:
-            data = json.load(f)
-            return data.get("kb_id", "")
+            return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
-        return ""
+        return {}
+
+
+def _save_config(**kwargs):
+    data = _load_config()
+    data.update(kwargs)
+    with open(_KB_CONFIG_PATH, "w") as f:
+        json.dump(data, f)
+
+
+def _load_stored_kb_id() -> str:
+    return _load_config().get("kb_id", "")
 
 
 def _save_kb_id(kb_id: str):
-    with open(_KB_CONFIG_PATH, "w") as f:
-        json.dump({"kb_id": kb_id}, f)
+    _save_config(kb_id=kb_id)
 
 
 class Config:

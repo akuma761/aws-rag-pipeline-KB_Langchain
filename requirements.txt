@@ -9,3 +9,5 @@ langchain
 langchain_aws
 langchain_community
 langchain-core
+streamlit>=1.28
+requests

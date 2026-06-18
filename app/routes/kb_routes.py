@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 
-from app.config import _save_kb_id
+from app.config import _save_kb_id, _save_config, _load_config
 from app.services.s3_service import (
     create_s3_bucket,
     download_sample_documents,
@@ -47,14 +47,31 @@ def upload_to_s3():
 
 @kb_bp.route("/create-collection", methods=["POST"])
 def create_collection():
+    existing = _load_config()
+    if existing.get("collection_id") and existing.get("collection_arn"):
+        return jsonify({
+            "message": "Collection already exists",
+            "collection_name": existing.get("collection_name", ""),
+            "collection_id": existing["collection_id"],
+            "collection_arn": existing["collection_arn"],
+        })
     body = request.json or {}
     name = body.get("vector_store_name")
     result = create_opensearch_collection(name)
+    _save_config(
+        collection_name=result["collection_name"],
+        collection_id=result["collection_id"],
+        collection_arn=result["collection_arn"],
+    )
     return jsonify({"message": "Collection created", **result})
 
 
 @kb_bp.route("/create", methods=["POST"])
 def create_kb():
+    existing = _load_config()
+    if existing.get("kb_id"):
+        return jsonify({"message": "Knowledge base already exists", "kb_id": existing["kb_id"]})
+
     body = request.json or {}
     errors = []
     if not body.get("bucket_name"):
@@ -80,12 +97,17 @@ def create_kb():
 
 @kb_bp.route("/create-data-source", methods=["POST"])
 def create_ds():
+    existing = _load_config()
+    if existing.get("ds_id"):
+        return jsonify({"message": "Data source already exists", "data_source_id": existing["ds_id"]})
+
     body = request.json or {}
     if not body.get("kb_id"):
         return jsonify({"error": "kb_id is required"}), 400
     if not body.get("bucket_name"):
         return jsonify({"error": "bucket_name is required"}), 400
     ds_id = create_data_source(body["kb_id"], body["bucket_name"], body.get("ds_name"))
+    _save_config(ds_id=ds_id)
     return jsonify({"message": "Data source created", "data_source_id": ds_id})
 
 
