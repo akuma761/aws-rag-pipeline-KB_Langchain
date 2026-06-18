@@ -12,17 +12,21 @@ def create_app():
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
 
-    file_handler = logging.FileHandler(log_dir / "app.log")
-    file_handler.setLevel(logging.ERROR)
-    file_handler.setFormatter(logging.Formatter(
-        "%(asctime)s %(levelname)s [%(name)s] %(message)s"
-    ))
+    log_formatter = logging.Formatter(
+        "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s"
+    )
 
     root = logging.getLogger()
-    root.addHandler(file_handler)
-    root.setLevel(logging.ERROR)
 
-    app.logger.setLevel(logging.ERROR)
+    file_handler = logging.FileHandler(log_dir / "app.log")
+    file_handler.setFormatter(log_formatter)
+    root.addHandler(file_handler)
+
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(log_formatter)
+    root.addHandler(console_handler)
+
+    root.setLevel(logging.ERROR)
 
     from app.routes.kb_routes import kb_bp
     from app.routes.rag_routes import rag_bp
