@@ -21,6 +21,9 @@ def retrieve_and_generate(
     region_id: str = None,
     session_id: str = None,
 ):
+    """Use when you want Bedrock to handle both retrieval and generation in a single API call.
+    Simplest option — no need to manage prompts or intermediate results yourself.
+    Good for quick RAG where you don't need custom prompt formatting or to inspect the context chunks before generation."""
     if region_id is None:
         region_id = boto3.session.Session().region_name
     client = _get_bedrock_agent_runtime_client()
@@ -46,6 +49,10 @@ def retrieve(
     number_of_results: int = 5,
     search_type: str = None,
 ):
+    """Use when you only want to fetch relevant context chunks from the knowledge base
+    WITHOUT generating an answer. Useful for inspecting raw retrieval quality, or when
+    you want full control over how the answer is generated (e.g. custom prompt, different
+    model, multi-turn reasoning) by passing the results to generate_answer() yourself."""
     client = _get_bedrock_agent_runtime_client()
     retrieval_config = {
         "vectorSearchConfiguration": {
@@ -107,6 +114,12 @@ def retrieve_and_generate_custom(
     model_id: str = "amazon.nova-lite-v1:0",
     search_type: str = None,
 ):
+    """Use when you want to separate retrieval and generation into two distinct steps.
+    Calls retrieve() first, then invokes the model directly with generate_answer() using
+    a custom prompt (FINANCIAL_ADVISOR_SYSTEM_PROMPT). Best when you need control over
+    the generation prompt, model parameters, or want to inspect/edit the retrieved
+    contexts before the model sees them."""
+
     retrieval_response = retrieve(query, kb_id, number_of_results, search_type)
     retrieval_results = retrieval_response["retrievalResults"]
     contexts = get_contexts_from_retrieval(retrieval_results)
