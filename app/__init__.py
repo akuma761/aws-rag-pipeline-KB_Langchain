@@ -28,10 +28,8 @@ def create_app():
 
     root.setLevel(logging.ERROR)
 
-    from app.routes.kb_routes import kb_bp
     from app.routes.rag_routes import rag_bp
 
-    app.register_blueprint(kb_bp, url_prefix="/api/v1/kb")
     app.register_blueprint(rag_bp, url_prefix="/api/v1/rag")
 
     @app.route("/health")
