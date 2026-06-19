@@ -35,12 +35,12 @@ with st.expander("💡 Example questions"):
     - Which booking has the highest fare?
     """)
 
-if prompt := st.chat_input("Ask a question about your MakeMyTrip invoices..."):
-    st.session_state.messages.append({"role": "user", "content": prompt})
+if query := st.chat_input("Ask a question about your MakeMyTrip invoices..."):
+    st.session_state.messages.append({"role": "user", "content": query})
     with st.chat_message("user"):
-        st.markdown(prompt)
+        st.markdown(query)
 
-    payload = {"query": prompt}
+    payload = {"query": query}
     if _default_kb_id:
         payload["kb_id"] = _default_kb_id
 
