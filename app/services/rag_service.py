@@ -1,17 +1,20 @@
 import json
+import os
 
 import boto3
 from botocore.client import Config
-from app.prompts import FINANCIAL_ADVISOR_SYSTEM_PROMPT, LANGCHAIN_RAG_SYSTEM_PROMPT, LANGCHAIN_RAG_HUMAN_PROMPT
+from app.prompts import TRAVEL_ANALYZER_SYSTEM_PROMPT, LANGCHAIN_RAG_SYSTEM_PROMPT, LANGCHAIN_RAG_HUMAN_PROMPT
+
+_AWS_REGION = os.getenv("AWS_DEFAULT_REGION") or os.getenv("AWS_REGION", "us-east-1")
 
 
 def _get_bedrock_runtime_client():
-    return boto3.client("bedrock-runtime")
+    return boto3.client("bedrock-runtime", region_name=_AWS_REGION)
 
 
 def _get_bedrock_agent_runtime_client():
     config = Config(connect_timeout=120, read_timeout=120, retries={"max_attempts": 0})
-    return boto3.client("bedrock-agent-runtime", config=config)
+    return boto3.client("bedrock-agent-runtime", region_name=_AWS_REGION, config=config)
 
 
 def retrieve_and_generate(
@@ -86,7 +89,7 @@ def generate_answer(
 ):
     client = _get_bedrock_runtime_client()
     context_str = "\n".join(contexts)
-    prompt = FINANCIAL_ADVISOR_SYSTEM_PROMPT.format(contexts=context_str, query=query)
+    prompt = TRAVEL_ANALYZER_SYSTEM_PROMPT.format(contexts=context_str, query=query)
 
     messages = [{"role": "user", "content": [{"text": prompt}]}]
     payload = json.dumps({
@@ -116,7 +119,7 @@ def retrieve_and_generate_custom(
 ):
     """Use when you want to separate retrieval and generation into two distinct steps.
     Calls retrieve() first, then invokes the model directly with generate_answer() using
-    a custom prompt (FINANCIAL_ADVISOR_SYSTEM_PROMPT). Best when you need control over
+    a custom prompt (TRAVEL_ANALYZER_SYSTEM_PROMPT). Best when you need control over
     the generation prompt, model parameters, or want to inspect/edit the retrieved
     contexts before the model sees them."""
 

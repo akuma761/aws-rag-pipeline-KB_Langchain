@@ -7,4 +7,4 @@ venv/
 cred.json
 token.pickle
 *.pickle
-kb_config.json
+logs/

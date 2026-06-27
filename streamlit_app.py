@@ -1,20 +1,12 @@
 import os
-import json
 
 import streamlit as st
 import requests
 
 API_BASE = os.getenv("FLASK_API_URL", "http://localhost:5000")
-ENDPOINT = "/api/v1/rag/retrieve-and-generate"
+ENDPOINT = "/api/v1/rag/generate"
 
-KB_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "app", "kb_config.json")
 _default_kb_id = os.getenv("KNOWLEDGE_BASE_ID", "")
-if not _default_kb_id:
-    try:
-        with open(KB_CONFIG_PATH) as f:
-            _default_kb_id = json.load(f).get("kb_id", "")
-    except (FileNotFoundError, json.JSONDecodeError):
-        pass
 
 st.set_page_config(page_title="MMT Invoice RAG", page_icon="🧾")
 st.title("🧾 MakeMyTrip Invoice Query")

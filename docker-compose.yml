@@ -1,0 +1,29 @@
+services:
+  flask:
+    image: rag-app:latest
+    build: .
+    container_name: rag-flask
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - FLASK_API_URL=http://flask:5000
+    command: python run.py
+    volumes:
+      - ./logs:/app/logs
+      - C:\Users\amit_\.aws:/root/.aws:ro
+
+  streamlit:
+    image: rag-app:latest
+    build: .
+    container_name: rag-streamlit
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      - FLASK_API_URL=http://flask:5000
+    command: python -m streamlit run streamlit_app.py
+    depends_on:
+      - flask

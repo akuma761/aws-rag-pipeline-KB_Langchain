@@ -73,11 +73,11 @@ query ──> client.retrieve_and_generate(input={"text": query})
 - **Service fn**: `retrieve_and_generate_custom()` → `retrieve()` + `generate_answer()` in `rag_service.py`
 - **Description**: Two-step process:
   1. `retrieve()` fetches context chunks from the KB.
-  2. `generate_answer()` sends them to the model with `FINANCIAL_ADVISOR_SYSTEM_PROMPT`.
-- **Prompt**: Uses `FINANCIAL_ADVISOR_SYSTEM_PROMPT` from `prompts.py`.
+  2. `generate_answer()` sends them to the model with `TRAVEL_ANALYZER_SYSTEM_PROMPT`.
+- **Prompt**: Uses `TRAVEL_ANALYZER_SYSTEM_PROMPT` from `prompts.py`.
 - **Use when**: You need control over the generation prompt, model parameters (temperature, max tokens), or want to inspect/edit the retrieved context before the model sees it.
 
-**Prompt template (`FINANCIAL_ADVISOR_SYSTEM_PROMPT`):**
+**Prompt template (`TRAVEL_ANALYZER_SYSTEM_PROMPT`):**
 ```
 Human: You are a financial advisor AI system...
 <context>

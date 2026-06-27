@@ -1,6 +1,4 @@
 import json
-import os
-import tempfile
 from unittest.mock import patch
 
 import pytest
@@ -25,20 +23,6 @@ def client(app):
 @pytest.fixture
 def runner(app):
     return app.test_cli_runner()
-
-
-@pytest.fixture
-def temp_kb_config():
-    dir = tempfile.mkdtemp()
-    path = os.path.join(dir, "kb_config.json")
-    data = {"kb_id": "stored-kb-id", "ds_id": "stored-ds-id",
-            "collection_id": "stored-coll-id", "collection_arn": "arn:aws:oss:us-east-1:123:collection/stored-coll-id"}
-    with open(path, "w") as f:
-        json.dump(data, f)
-    with patch("app.config._KB_CONFIG_PATH", path):
-        yield path
-    os.remove(path)
-    os.rmdir(dir)
 
 
 @pytest.fixture

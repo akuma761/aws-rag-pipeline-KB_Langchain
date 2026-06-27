@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 
 from app.services.rag_service import get_contexts_from_retrieval
-from app.prompts import FINANCIAL_ADVISOR_SYSTEM_PROMPT, LANGCHAIN_RAG_SYSTEM_PROMPT
+from app.prompts import TRAVEL_ANALYZER_SYSTEM_PROMPT, LANGCHAIN_RAG_SYSTEM_PROMPT
 
 
 def test_get_contexts_from_retrieval():
@@ -20,8 +20,8 @@ def test_get_contexts_from_retrieval_empty():
     assert get_contexts_from_retrieval([]) == []
 
 
-def test_financial_advisor_prompt_format():
-    prompt = FINANCIAL_ADVISOR_SYSTEM_PROMPT.format(
+def test_travel_analyzer_prompt_format():
+    prompt = TRAVEL_ANALYZER_SYSTEM_PROMPT.format(
         contexts="ctx1\nctx2", query="How much did I spend?"
     )
     assert "ctx1" in prompt
